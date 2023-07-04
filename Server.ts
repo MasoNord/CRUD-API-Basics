@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 import { UserController } from './src/controller/UserController';
 import { checkID } from './src/util/checkID';
-import { updateJSON } from './src/util/updateJSON';
+
 
 
 export async function main() {
