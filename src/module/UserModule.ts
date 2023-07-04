@@ -1,24 +1,24 @@
-
-import jsonUser from "../data/users.json";
 import {v4 as uuidv4} from "uuid";
 
 import {writeData} from "../util/writeData";
+import { Data } from "../data/Data";
+
+const objData = new Data();
 
 export class UserModule {
    
     public findAll() {
         return new Promise((resolve, reject) => {
-            resolve(jsonUser);
+            // resolve(jsonUser);
+            resolve(objData.getStorage());
         });
     }
     public findById(id) {
         return new Promise((resolve, reject) => {
-            
-            jsonUser.forEach((u) => {
-                if (u.id.toString() === id) {
-                    resolve(u);
-                }
-            });   
+            for (let i = 0; i < objData.getStorage().length; ++i) {
+                if (objData.getStorage()[i].id === id)
+                    resolve(objData.getStorage()[i]);
+            }
             resolve(undefined);
         });
     }
@@ -26,25 +26,26 @@ export class UserModule {
     public create(user) {
         return new Promise((resolve, reject) => {
             const newUser = {id: uuidv4(), ...user};
-            jsonUser.push(newUser);
-            writeData("./src/data/users.json", jsonUser);
+            objData.addNewUser(newUser);
             resolve(newUser);
         })
     }
 
     public update(id, user) {
         return new Promise((resolve, reject) => {
-            const userIndex = jsonUser.findIndex((p) => p.id === id);
-            jsonUser[userIndex] = {id, ...user};
-            writeData("./src/data/users.json", jsonUser);
-            resolve(jsonUser[userIndex]);
+            var userIndex = objData.getUserIndex(id);
+            objData.getStorage()[userIndex] = {id, ...user};
+            resolve(objData.getStorage()[userIndex]);
         })
     }
 
     public delete(id) {
         return new Promise((resolve, reject) => {
-            writeData("./src/data/users.json", jsonUser.filter((p) => p.id !== id));
-            resolve({});
+            var userIndex = objData.getUserIndex(id);
+            objData.getStorage().splice(userIndex, 1);
+
+            resolve ({});
+
         })
     }
 }

@@ -1,7 +1,10 @@
 import http from 'http';
+import dotenv from 'dotenv';
+
 import { UserController } from './src/controller/UserController';
 import { checkID } from './src/util/checkID';
-import dotenv from 'dotenv';
+import { updateJSON } from './src/util/updateJSON';
+
 
 export async function main() {
     dotenv.config();
@@ -59,5 +62,4 @@ main();
 /** 
  * TODO: writes tests for the apis
  * TODO: implement horizontal scaling for the current project
- * TODO: and also don't forget about small tiny things as such as: read prot from .end file, add two dfferents modes, etc
  */

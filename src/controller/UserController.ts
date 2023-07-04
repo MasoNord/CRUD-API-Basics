@@ -1,10 +1,9 @@
-// Here we are going to implement controlling of status
-// Iteracte with module and data 
-
-import jsonUser from "../data/users.json";
 import { UserModule } from "../module/UserModule";
 import { getData } from "../util/getPostData";
 import { checkPOST } from "../util/checkPOST";
+import { Data } from "../data/Data";
+
+const objData = new Data();
 
 export class UserController {
     
@@ -78,12 +77,12 @@ export class UserController {
                 const body: string = await getData(request);
 
                 const {username, age, hobbies} = JSON.parse(body);
-                const userIndex = jsonUser.findIndex((p) => p.id === id);
-
+                var userIndex = objData.getUserIndex(id);
+                
                 const user = {
-                    username: username || jsonUser[userIndex].username, 
-                    age: age || jsonUser[userIndex].age, 
-                    hobbies: hobbies || jsonUser[userIndex].hobbies 
+                    username: username || objData.getStorage()[userIndex].username, 
+                    age: age || objData.getStorage()[userIndex].age, 
+                    hobbies: hobbies || objData.getStorage()[userIndex].hobbies 
                 }
                     
                 const updatedUser = await userModule.update(id, user);
