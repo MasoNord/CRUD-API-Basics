@@ -6,9 +6,9 @@ interface UserInterface {
 }
 
 export class User implements UserInterface {
-  public id: string = "";
+  public id: string = '';
 
-  public username: string = "";
+  public username: string = '';
 
   public age: number = -1;
 

@@ -18,7 +18,7 @@ export class UserController {
     }
   }
 
-  public async getUser(request: any, response: any, id: string) {    
+  public async getUser(request: any, response: any, id: string) {
     try {
       if (!checkID(id)) {
         response.writeHead(400, { 'Content-Type': 'application/json' });
@@ -51,7 +51,7 @@ export class UserController {
       if (!validateInfo(user.username, user.age, user.hobbies)) {
         response.writeHead(400, { 'Content-Type': 'application/json' });
         response.end(JSON.stringify({ message: 'Body does not contain required fields' }));
-      }else {
+      } else {
         const newUser = await this.userService.create(user);
 
         response.writeHead(201, { 'Content-Type': 'application/json' });
@@ -71,14 +71,14 @@ export class UserController {
         response.end(JSON.stringify({ mesage: 'Wrong format of id' }));
       }
       const getUser = await this.userService.findById(id);
-      
+
       if (getUser === null) {
         response.writeHead(404, { 'Content-Type': 'application/json' });
         response.end(JSON.stringify({ message: 'User not found' }));
-      }else {
+      } else {
         const body: string = await parseData(request);
         const { username, age, hobbies } = JSON.parse(body);
-        
+
         const user: User = {
           id: getUser.id,
           username: username || getUser.username,
@@ -89,11 +89,11 @@ export class UserController {
         if (!validateInfo(user.username, user.age, user.hobbies)) {
           response.writeHead(400, { 'Content-Type': 'application/json' });
           response.end(JSON.stringify({ message: 'Inccorect data types entered' }));
-        }else {
+        } else {
           const updatedUser: User | null = await this.userService.update(id, user);
 
           response.writeHead(200, { 'Content-Type': 'application/json' });
-          response.end(JSON.stringify({updatedUser}));
+          response.end(JSON.stringify({ updatedUser }));
         }
       }
     } catch (err) {
@@ -108,7 +108,7 @@ export class UserController {
         response.writeHead(400, { 'Content-Type': 'application/json' });
         response.end(JSON.stringify({ mesage: 'Wrong format of id' }));
       }
-      
+
       const userIndex = await (await this.userService.findAll()).findIndex((u) => u.id === id);
 
       if (userIndex === -1) {
@@ -119,7 +119,7 @@ export class UserController {
         response.writeHead(204, { 'Content-Type': 'application/json' });
         response.end(JSON.stringify({ message: `User ${id} was removed` }));
       }
-    } catch(err) {
+    } catch (err) {
       response.writeHead(500, { 'Content-Type': 'application/json' });
       response.end(JSON.stringify({ message: 'Internal Server Error' }));
     }

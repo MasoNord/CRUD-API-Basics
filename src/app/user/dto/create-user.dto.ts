@@ -5,7 +5,7 @@ interface createUserInterface {
 }
 
 export class CreateUser implements createUserInterface {
-  public username: string = "";
+  public username: string = '';
   public age: number = 0;
   public hobbies: string[] = [];
 }

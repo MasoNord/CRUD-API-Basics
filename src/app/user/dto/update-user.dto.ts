@@ -4,6 +4,6 @@ interface updateUserInterfce {
 }
 
 export class UpdateUser implements updateUserInterfce {
-  public username: string = "";
+  public username: string = '';
   public hobbies: string[] = [];
 }

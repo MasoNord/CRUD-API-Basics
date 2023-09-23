@@ -29,7 +29,7 @@ export class AppController {
       }
     } catch (err) {
       response.writeHead(500, { 'Content-Type': 'application/json' });
-      response.end(JSON.stringify({ mesage: `${"Internal server error"}` }));
+      response.end(JSON.stringify({ mesage: `${'Internal server error'}` }));
     }
   });
 

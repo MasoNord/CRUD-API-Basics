@@ -1,13 +1,13 @@
 import cluster from 'node:cluster';
 import process from 'node:process';
-import os from 'os'
+import os from 'os';
 import { AppController } from './app/app.controller';
 import { UserController } from './app/user/user.controller';
 import { UserService } from './app/user/users.service';
 
 const numCPUs = os.availableParallelism() - 1;
 const PORT: number = parseInt(process.env.PORT!) || 5000;
-const appController = new AppController(new UserController(new UserService));
+const appController = new AppController(new UserController(new UserService()));
 
 if (cluster.isPrimary) {
   console.log(`Primary ${process.pid} is running`);
