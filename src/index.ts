@@ -9,7 +9,7 @@ dotenv.config();
 class MainApp {
   constructor(private readonly appController: AppController) {}
   
-  private PORT: number = parseInt(process.env.PORT) || 5000; 
+  private PORT: number = parseInt(process.env.PORT!) || 5000; 
   
   public startServer() {
     this.appController.getSever().listen(this.PORT, () => {

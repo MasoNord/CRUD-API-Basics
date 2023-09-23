@@ -6,7 +6,7 @@ import { UserController } from './app/user/user.controller';
 import { UserService } from './app/user/users.service';
 
 const numCPUs = os.availableParallelism() - 1;
-const PORT: number = parseInt(process.env.PORT) || 5000;
+const PORT: number = parseInt(process.env.PORT!) || 5000;
 const appController = new AppController(new UserController(new UserService));
 
 if (cluster.isPrimary) {
