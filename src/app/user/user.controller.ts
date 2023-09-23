@@ -1,4 +1,5 @@
 import { UserService } from '../user/users.service';
+import { checkID } from '../util/checkID';
 import { parseData } from '../util/parseData';
 import { validateInfo } from '../util/validateUserData';
 import { User } from './entities/user.entity';
@@ -6,7 +7,7 @@ import { User } from './entities/user.entity';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  public async getUsers(request, response) {
+  public async getUsers(request: any, response: any) {
     try {
       const users = await this.userService.findAll();
       response.writeHead(200, { 'Content-Type': 'application/json' });
@@ -17,11 +18,16 @@ export class UserController {
     }
   }
 
-  public async getUser(request, response, id) {
+  public async getUser(request: any, response: any, id: string) {
+    if (!checkID(id)) {
+      response.writeHead(400, { 'Content-Type': 'application/json' });
+      response.end(JSON.stringify({ mesage: 'Wrong format of id' }));
+    }
+    
     try {
       const user = await this.userService.findById(id);
       if (user === null) {
-        response.writeHead(400, { 'Content-Type': 'application/json' });
+        response.writeHead(404, { 'Content-Type': 'application/json' });
         response.end(JSON.stringify({ message: 'User Not Found' }));
       } else {
         response.writeHead(200, { 'Content-Type': 'application/json' });
@@ -33,7 +39,7 @@ export class UserController {
     }
   }
 
-  public async createUser(request, response) {
+  public async createUser(request: any, response: any) {
     try {
       const body: string = await parseData(request);
       const { username, age, hobbies } = JSON.parse(body);
@@ -60,7 +66,11 @@ export class UserController {
     }
   }
 
-  public async updateUser(request, response, id) {
+  public async updateUser(request: any, response: any, id: string) {
+    if (!checkID(id)) {
+      response.writeHead(400, { 'Content-Type': 'application/json' });
+      response.end(JSON.stringify({ mesage: 'Wrong format of id' }));
+    }
     try {
       const getUser = await this.userService.findById(id);
       
@@ -83,7 +93,7 @@ export class UserController {
           response.end(JSON.stringify({ message: 'Inccorect data types entered' }));
         }
 
-        const updatedUser: User = await this.userService.update(id, user);
+        const updatedUser: User | null = await this.userService.update(id, user);
 
         response.writeHead(200, { 'Content-Type': 'application/json' });
         response.end(JSON.stringify({updatedUser}));
@@ -91,11 +101,15 @@ export class UserController {
     } catch (err) {
       response.writeHead(500, { 'Content-Type': 'application/json' });
       response.end(JSON.stringify({ message: 'Internal Server Error' }));
-      // console.log(err);
     }
   }
 
-  public async deleteUser(request, response, id) {
+  public async deleteUser(request: any, response: any, id: string) {
+    if (!checkID(id)) {
+      response.writeHead(400, { 'Content-Type': 'application/json' });
+      response.end(JSON.stringify({ mesage: 'Wrong format of id' }));
+    }
+    
     try {
       const userIndex = await (await this.userService.findAll()).findIndex((u) => u.id === id);
 
@@ -103,11 +117,11 @@ export class UserController {
         response.writeHead(400, { 'Content-Type': 'application/json' });
         response.end(JSON.stringify({ message: 'User Not Found' }));
       } else {
-        await this.userService.delete(id);
+        await this.userService.delete(userIndex);
         response.writeHead(204, { 'Content-Type': 'application/json' });
         response.end(JSON.stringify({ message: `User ${id} was removed` }));
       }
-    } catch {
+    } catch(err) {
       response.writeHead(500, { 'Content-Type': 'application/json' });
       response.end(JSON.stringify({ message: 'Internal Server Error' }));
     }

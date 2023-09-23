@@ -1,8 +1,8 @@
-export function parseData(request): Promise<string> {
+export function parseData(request: any): Promise<string> {
   return new Promise((resolve, reject) => {
     try {
       let body: string = '';
-      request.on('data', (chunk) => {
+      request.on('data', (chunk: any) => {
         body += chunk.toString();
       });
 

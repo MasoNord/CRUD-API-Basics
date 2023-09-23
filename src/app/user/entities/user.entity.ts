@@ -6,13 +6,13 @@ interface UserInterface {
 }
 
 export class User implements UserInterface {
-  public id: string;
+  public id: string = "";
 
-  public username: string;
+  public username: string = "";
 
-  public age: number;
+  public age: number = -1;
 
-  public hobbies: string[];
+  public hobbies: string[] = [];
 
   constructor(props: User) {
     Object.assign(this, props);
