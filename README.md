@@ -46,3 +46,14 @@ Run server with multiple instances
 ```bash
   npm run start:multi
 ```
+
+Run test
+```bash
+  npm test
+```
+
+Create and run docker image
+```bash
+  docker build -t <name_it_whatever_you_want> .
+  docker run -p 4000:4000 <IMAGE ID>
+```
