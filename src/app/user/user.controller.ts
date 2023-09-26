@@ -13,6 +13,7 @@ export class UserController {
       response.writeHead(200, { 'Content-Type': 'application/json' });
       response.end(JSON.stringify(users));
     } catch (err) {
+      console.log(err);
       response.writeHead(500, { 'Content-Type': 'application/json' });
       response.end(JSON.stringify({ message: 'Internal Server Error' }));
     }
@@ -22,17 +23,20 @@ export class UserController {
     try {
       if (!checkID(id)) {
         response.writeHead(400, { 'Content-Type': 'application/json' });
-        response.end(JSON.stringify({ mesage: 'Wrong format of id' }));
-      }
-      const user = await this.userService.findById(id);
-      if (user === null) {
-        response.writeHead(404, { 'Content-Type': 'application/json' });
-        response.end(JSON.stringify({ message: 'User Not Found' }));
+        response.end(JSON.stringify({ message: 'not an uuid format' }));
       } else {
-        response.writeHead(200, { 'Content-Type': 'application/json' });
-        response.end(JSON.stringify(user));
+        const user = await this.userService.findById(id);
+
+        if (Object.keys(user).length === 0) {
+          response.writeHead(404, { 'Content-Type': 'application/json' });
+          response.end(JSON.stringify({ message: 'User Not Found' }));
+        } else {
+          response.writeHead(200, { 'Content-Type': 'application/json' });
+          response.end(JSON.stringify(user));
+        }
       }
     } catch (err) {
+      console.log(err);
       response.writeHead(500, { 'Content-Type': 'application/json' });
       response.end(JSON.stringify({ message: 'Internal Server Error' }));
     }
@@ -48,6 +52,7 @@ export class UserController {
         age,
         hobbies,
       };
+
       if (!validateInfo(user.username, user.age, user.hobbies)) {
         response.writeHead(400, { 'Content-Type': 'application/json' });
         response.end(JSON.stringify({ message: 'Body does not contain required fields' }));
@@ -55,12 +60,12 @@ export class UserController {
         const newUser = await this.userService.create(user);
 
         response.writeHead(201, { 'Content-Type': 'application/json' });
-        response.end(JSON.stringify(newUser));
+        response.end(JSON.stringify({ newUser }));
       }
     } catch (err) {
+      console.log(err);
       response.writeHead(500, { 'Content-Type': 'application/json' });
       response.end(JSON.stringify({ message: 'Internal Server Error' }));
-      console.log(err);
     }
   }
 
@@ -68,35 +73,35 @@ export class UserController {
     try {
       if (!checkID(id)) {
         response.writeHead(400, { 'Content-Type': 'application/json' });
-        response.end(JSON.stringify({ mesage: 'Wrong format of id' }));
-      }
-      const getUser = await this.userService.findById(id);
-
-      if (getUser === null) {
-        response.writeHead(404, { 'Content-Type': 'application/json' });
-        response.end(JSON.stringify({ message: 'User not found' }));
+        response.end(JSON.stringify({ mesage: 'not an uuid format' }));
       } else {
-        const body: string = await parseData(request);
-        const { username, age, hobbies } = JSON.parse(body);
-
-        const user: User = {
-          id: getUser.id,
-          username: username || getUser.username,
-          age: age || getUser.age,
-          hobbies: hobbies || getUser.hobbies,
-        };
-
-        if (!validateInfo(user.username, user.age, user.hobbies)) {
-          response.writeHead(400, { 'Content-Type': 'application/json' });
-          response.end(JSON.stringify({ message: 'Inccorect data types entered' }));
+        const getUser = await this.userService.findById(id);
+        if (Object.keys(getUser).length === 0) {
+          response.writeHead(404, { 'Content-Type': 'application/json' });
+          response.end(JSON.stringify({ message: 'User not found' }));
         } else {
-          const updatedUser: User | null = await this.userService.update(id, user);
+          const body: string = await parseData(request);
+          const { username, age, hobbies } = JSON.parse(body);
 
-          response.writeHead(200, { 'Content-Type': 'application/json' });
-          response.end(JSON.stringify({ updatedUser }));
+          const user: User = {
+            id: getUser[0].id,
+            username: username || getUser[0].username,
+            age: age || getUser[0].age,
+            hobbies: hobbies || getUser[0].hobbies,
+          };
+
+          if (!validateInfo(user.username, user.age, user.hobbies)) {
+            response.writeHead(400, { 'Content-Type': 'application/json' });
+            response.end(JSON.stringify({ message: 'Inccorect data types entered' }));
+          } else {
+            await this.userService.update(id, user);
+            response.writeHead(200, { 'Content-Type': 'application/json' });
+            response.end();
+          }
         }
       }
     } catch (err) {
+      console.log(err);
       response.writeHead(500, { 'Content-Type': 'application/json' });
       response.end(JSON.stringify({ message: 'Internal Server Error' }));
     }
@@ -106,20 +111,21 @@ export class UserController {
     try {
       if (!checkID(id)) {
         response.writeHead(400, { 'Content-Type': 'application/json' });
-        response.end(JSON.stringify({ mesage: 'Wrong format of id' }));
+        response.end(JSON.stringify({ mesage: 'not an uuid format' }));
       }
 
-      const userIndex = await (await this.userService.findAll()).findIndex((u) => u.id === id);
+      const getUser = await this.userService.findById(id);
 
-      if (userIndex === -1) {
+      if (Object.keys(getUser).length === 0) {
         response.writeHead(404, { 'Content-Type': 'application/json' });
         response.end(JSON.stringify({ message: 'User Not Found' }));
       } else {
-        await this.userService.delete(userIndex);
+        await this.userService.delete(id);
         response.writeHead(204, { 'Content-Type': 'application/json' });
-        response.end(JSON.stringify({ message: `User ${id} was removed` }));
+        response.end();
       }
     } catch (err) {
+      console.log(err);
       response.writeHead(500, { 'Content-Type': 'application/json' });
       response.end(JSON.stringify({ message: 'Internal Server Error' }));
     }

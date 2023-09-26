@@ -4,9 +4,9 @@ import os from 'os';
 import { AppController } from './app/app.controller';
 import { UserController } from './app/user/user.controller';
 import { UserService } from './app/user/users.service';
+import { port } from './config';
 
 const numCPUs = os.availableParallelism() - 1;
-const PORT: number = parseInt(process.env.PORT!) || 5000;
 const appController = new AppController(new UserController(new UserService()));
 
 if (cluster.isPrimary) {
@@ -28,7 +28,7 @@ if (cluster.isPrimary) {
     });
   });
 } else {
-  appController.getSever().listen(PORT, () => {
-    console.log(`Worker ${process.pid} http://localhost:${PORT}/`);
+  appController.getSever().listen(port, () => {
+    console.log(`Worker ${process.pid} http://localhost:${port}/`);
   });
 }

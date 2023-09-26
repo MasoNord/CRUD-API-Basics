@@ -3,7 +3,5 @@ export function validateInfo(username: string, age: number, hobbies: string[]): 
 
   if (typeof age !== 'number' && age !== null) return false;
 
-  if (typeof hobbies !== 'object' && hobbies !== null) return false;
-
   return true;
 }
